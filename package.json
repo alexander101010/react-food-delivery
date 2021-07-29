@@ -1,5 +1,5 @@
 {
-  "name": "react-complete-guide",
+  "name": "react-food-delivery",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -34,5 +34,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "description": "practice project",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexander101010/react-food-delivery.git"
+  },
+  "author": "alex",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexander101010/react-food-delivery/issues"
   }
 }
