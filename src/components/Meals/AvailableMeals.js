@@ -3,11 +3,10 @@ import React from 'react';
 import MealItem from './MealItem/MealItem';
 import Card from '../UI/Card/Card';
 
-import { DUMMY_MEALS } from './dummy-meals';
 import classes from './AvailableMeals.module.css';
 
-const AvailableMeals = () => {
-  const mealsList = DUMMY_MEALS.map((meal) => {
+const AvailableMeals = (props) => {
+  const mealsList = props.meals.map((meal) => {
     return (
       <MealItem
         key={meal.id}
