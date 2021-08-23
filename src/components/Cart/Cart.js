@@ -1,7 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 
 import CartItem from './CartItem';
 import Modal from '../UI/Modal/Modal';
+import CartDeliveryForm from './CartDeliveryForm';
+
 import CartContext from '../../store/cart-context';
 
 import classes from './Cart.module.css';
@@ -33,6 +35,31 @@ const Cart = (props) => {
       ))}
     </ul>
   );
+
+  // *****************************************
+  // ORDER FORM - NAME AND ADDRESS ***********
+  // *****************************************
+  const [showDeliveryForm, setShowDeliveryForm] = useState(false);
+
+  const showDeliveryFormHandler = (e) => {
+    if (hasItems) {
+      setShowDeliveryForm(true);
+    }
+  };
+
+  const orderActions = (
+    <div className={classes.actions}>
+      <button className={classes['button--alt']} onClick={props.onClose}>
+        Close
+      </button>
+      {hasItems && (
+        <button className={classes.button} onClick={showDeliveryFormHandler}>
+          Order
+        </button>
+      )}
+    </div>
+  );
+
   return (
     <Modal onClose={props.onClose}>
       {cartItems}
@@ -40,12 +67,8 @@ const Cart = (props) => {
         <span>Total Amount</span>
         <span>{totalAmount}</span>
       </div>
-      <div className={classes.actions}>
-        <button className={classes['button--alt']} onClick={props.onClose}>
-          Close
-        </button>
-        {hasItems && <button className={classes.button}>Order</button>}
-      </div>
+      {!showDeliveryForm && orderActions}
+      {showDeliveryForm && <CartDeliveryForm onClose={props.onClose} />}
     </Modal>
   );
 };
