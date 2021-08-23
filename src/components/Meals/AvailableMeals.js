@@ -4,13 +4,14 @@ import MealItem from './MealItem/MealItem';
 import Card from '../UI/Card/Card';
 
 import useHttp from '../../hooks/use-http';
-import { REQUEST_URL } from '../../config';
+import { REQUEST_URL } from '../../js/config';
 
 import classes from './AvailableMeals.module.css';
 
 const AvailableMeals = (props) => {
   const [meals, setMeals] = useState([]);
-  const { isLoading, error, sendRequest: fetchMeals } = useHttp();
+  const { isLoading, error: httpError, sendRequest: fetchMeals } = useHttp();
+
   useEffect(() => {
     const transformMeals = (mealsObj) => {
       const loadedMeals = [];
@@ -18,22 +19,22 @@ const AvailableMeals = (props) => {
       for (const mealKey in mealsObj) {
         loadedMeals.push({
           id: mealKey,
+          name: mealsObj[mealKey].name,
           description: mealsObj[mealKey].description,
           price: mealsObj[mealKey].price,
-          name: mealsObj[mealKey].name,
         });
       }
       setMeals(loadedMeals);
     };
 
-    // fetchMeals (renamed from sendRequest, wants requestConfig object and applyData function)
+    // fetchMeals (renamed sendRequest, wants requestConfig obj & applyData fn)
     fetchMeals(
       {
         url: REQUEST_URL,
       },
       transformMeals
     );
-  }, [fetchMeals]); // because this is a function as a dependency we need to wrap function in useCallback in custom hook to prevent infinite loop of rerendering
+  }, [fetchMeals]); // bc this is a fn as a dependency we need to wrap fn in useCallback in custom hook to prevent infinite loop of rerendering
 
   const mealsList = meals.map((meal) => {
     return (
@@ -46,11 +47,26 @@ const AvailableMeals = (props) => {
       />
     );
   });
+
+  let content = isLoading ? (
+    <div>
+      <p>Meal options are loading!</p>
+    </div>
+  ) : (
+    <ul>{mealsList}</ul>
+  );
+
+  if (httpError) {
+    content = (
+      <p className={classes['http-error-text']}>
+        Something went wrong 🙃 ({httpError})
+      </p>
+    );
+  }
+
   return (
     <section className={classes.meals}>
-      <Card>
-        <ul>{mealsList}</ul>
-      </Card>
+      <Card>{content}</Card>
     </section>
   );
 };
