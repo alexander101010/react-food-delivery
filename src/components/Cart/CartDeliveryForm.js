@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
 import useInput from '../../hooks/use-input';
-import { validFullName, validString } from '../../js/helpers';
+// import useHttp from '../../hooks/use-http';
+import { validFullName, validString, isFiveChars } from '../../js/helpers';
 import classes from './CartDeliveryForm.module.css';
 
 const CartDeliveryForm = (props) => {
   const [showForm, setShowForm] = useState(true);
-  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const {
     value: enteredName,
@@ -14,7 +14,6 @@ const CartDeliveryForm = (props) => {
     valueChangeHandler: nameChangeHandler,
     inputBlurHandler: nameBlurHandler,
     isValid: nameIsValid,
-    reset: resetName,
   } = useInput(validFullName);
 
   const {
@@ -23,17 +22,15 @@ const CartDeliveryForm = (props) => {
     valueChangeHandler: addressChangeHandler,
     inputBlurHandler: addressBlurHandler,
     isValid: addressIsValid,
-    reset: resetAddress,
   } = useInput(validString);
 
   const {
-    value: enteredZipcode,
-    hasError: zipcodeHasError,
-    valueChangeHandler: zipcodeChangeHandler,
-    inputBlurHandler: zipcodeBlurHandler,
-    isValid: zipcodeIsValid,
-    reset: resetZipcode,
-  } = useInput(validString);
+    value: enteredZipCode,
+    hasError: zipCodeHasError,
+    valueChangeHandler: zipCodeChangeHandler,
+    inputBlurHandler: zipCodeBlurHandler,
+    isValid: zipCodeIsValid,
+  } = useInput(isFiveChars);
 
   const {
     value: enteredCity,
@@ -41,41 +38,32 @@ const CartDeliveryForm = (props) => {
     valueChangeHandler: cityChangeHandler,
     inputBlurHandler: cityBlurHandler,
     isValid: cityIsValid,
-    reset: resetCity,
   } = useInput(validString);
 
   //FORM VALIDATION
-  let formIsValid;
-  if (nameIsValid && addressIsValid && zipcodeIsValid && cityIsValid) {
-    formIsValid = true;
-  } else {
-    formIsValid = false;
-  }
-
-  const resetInputs = () => {
-    resetName();
-    resetAddress();
-    resetZipcode();
-    resetCity();
-  };
+  const formIsValid =
+    nameIsValid && addressIsValid && zipCodeIsValid && cityIsValid;
 
   const submitHandler = (e) => {
     e.preventDefault();
     if (!formIsValid) return;
-    console.log(enteredName, enteredAddress);
-    // make POST request with this info and order
-    resetInputs();
     setShowForm(false);
-    setShowConfirmation(true);
+    // pass data to Cart for submition, since Cart also has access to items in cart
+    props.onConfirm({
+      name: enteredName,
+      address: enteredAddress,
+      city: enteredCity,
+      zipCode: enteredZipCode,
+    });
   };
 
   const nameClasses = `form-control${nameHasError ? ' invalid' : ''}`;
   const addressClasses = `form-control${addressHasError ? ' invalid' : ''}`;
-  const zipcodeClasses = `form-control${zipcodeHasError ? ' invalid' : ''}`;
+  const zipCodeClasses = `form-control${zipCodeHasError ? ' invalid' : ''}`;
   const cityClasses = `form-control${cityHasError ? ' invalid' : ''}`;
 
   const deliveryForm = (
-    <form onSubmit={submitHandler}>
+    <form onSubmit={submitHandler} className={classes['delivery-form']}>
       <div className={classes['control-group']}>
         <div className={nameClasses}>
           <label htmlFor='name'>Full Name</label>
@@ -111,18 +99,18 @@ const CartDeliveryForm = (props) => {
         </div>
       </div>
       <div className={classes['control-group']}>
-        <div className={zipcodeClasses}>
-          <label htmlFor='zipcode'>Zipcode</label>
+        <div className={zipCodeClasses}>
+          <label htmlFor='zipCode'>ZipCode</label>
           <input
             type='text'
-            id='zipcode'
-            value={enteredZipcode}
-            onChange={zipcodeChangeHandler}
-            onBlur={zipcodeBlurHandler}
+            id='zipCode'
+            value={enteredZipCode}
+            onChange={zipCodeChangeHandler}
+            onBlur={zipCodeBlurHandler}
           />
-          {zipcodeHasError && (
+          {zipCodeHasError && (
             <p className={classes['error-text']}>
-              Please enter your full zipcode!
+              Please enter valid zipCode (5 characters)!
             </p>
           )}
         </div>
@@ -157,12 +145,7 @@ const CartDeliveryForm = (props) => {
       </div>
     </form>
   );
-  return (
-    <React.Fragment>
-      {showForm && deliveryForm}
-      {showConfirmation && <p>Thank you! Your order has been received.</p>}
-    </React.Fragment>
-  );
+  return <React.Fragment>{showForm && deliveryForm}</React.Fragment>;
 };
 
 export default CartDeliveryForm;
