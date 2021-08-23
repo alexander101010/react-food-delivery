@@ -30,7 +30,7 @@ const AvailableMeals = (props) => {
     // fetchMeals (renamed sendRequest, wants requestConfig obj & applyData fn)
     fetchMeals(
       {
-        url: REQUEST_URL,
+        url: `${REQUEST_URL}/meals.json`,
       },
       transformMeals
     );
