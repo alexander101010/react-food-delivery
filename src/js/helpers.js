@@ -3,3 +3,5 @@ export const validFullName = (fullName) => {
 };
 
 export const validString = (string) => string.trim() !== '';
+
+export const isFiveChars = (string) => string.trim().length === 5;
