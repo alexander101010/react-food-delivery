@@ -1,3 +1,8 @@
+.delivery-form {
+  overflow: scroll;
+  height: 28rem;
+}
+
 .form-control {
   margin-bottom: 1rem;
 }
